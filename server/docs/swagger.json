@@ -1677,9 +1677,7 @@
                                     "properties": {
                                         "data": {
                                             "type": "array",
-                                            "items": {
-                                                "type": "object"
-                                            }
+                                            "items": {}
                                         },
                                         "msg": {
                                             "type": "string"
@@ -7927,6 +7925,10 @@
                 },
                 "port": {
                     "description": "数据库连接端口",
+                    "type": "string"
+                },
+                "template": {
+                    "description": "postgresql指定template",
                     "type": "string"
                 },
                 "userName": {

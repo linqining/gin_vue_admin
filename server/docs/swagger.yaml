@@ -1090,6 +1090,9 @@ definitions:
       port:
         description: 数据库连接端口
         type: string
+      template:
+        description: postgresql指定template
+        type: string
       userName:
         description: 数据库用户名
         type: string
@@ -2819,8 +2822,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  items:
-                    type: object
+                  items: {}
                   type: array
                 msg:
                   type: string
