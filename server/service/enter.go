@@ -1,8 +1,10 @@
 package service
 
 import (
+	"github.com/flipped-aurora/gin-vue-admin/server/service/achievement"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/certificate"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/company"
+	"github.com/flipped-aurora/gin-vue-admin/server/service/employee"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/example"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/job"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/job_certificate"
@@ -22,4 +24,6 @@ type ServiceGroup struct {
 	CertificateServiceGroup      certificate.ServiceGroup
 	Job_certificateServiceGroup  job_certificate.ServiceGroup
 	User_certificateServiceGroup user_certificate.ServiceGroup
+	EmployeeServiceGroup         employee.ServiceGroup
+	AchievementServiceGroup      achievement.ServiceGroup
 }

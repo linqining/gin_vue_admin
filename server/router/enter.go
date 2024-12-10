@@ -1,8 +1,10 @@
 package router
 
 import (
+	"github.com/flipped-aurora/gin-vue-admin/server/router/achievement"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/certificate"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/company"
+	"github.com/flipped-aurora/gin-vue-admin/server/router/employee"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/example"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/job"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/job_certificate"
@@ -22,4 +24,6 @@ type RouterGroup struct {
 	Certificate      certificate.RouterGroup
 	Job_certificate  job_certificate.RouterGroup
 	User_certificate user_certificate.RouterGroup
+	Employee         employee.RouterGroup
+	Achievement      achievement.RouterGroup
 }
