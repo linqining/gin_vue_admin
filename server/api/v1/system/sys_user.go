@@ -75,6 +75,63 @@ func (b *BaseApi) Login(c *gin.Context) {
 	response.FailWithMessage("验证码错误", c)
 }
 
+//// Login
+//// @Tags     Base
+//// @Summary  用户登录
+//// @Produce   application/json
+//// @Param    data  body      systemReq.Login                                             true  "用户名, 密码, 验证码"
+//// @Success  200   {object}  response.Response{data=systemRes.LoginResponse,msg=string}  "返回包括用户信息,token,过期时间"
+//// @Router   /base/login [post]
+//func (b *BaseApi) LoginByAddress(c *gin.Context) {
+//	type AddressLogin struct {
+//		Address string `json:"address"`
+//	}
+//	var l AddressLogin
+//	err := c.ShouldBindJSON(&l)
+//	key := c.ClientIP()
+//
+//	if err != nil {
+//		response.FailWithMessage(err.Error(), c)
+//		return
+//	}
+//	err = utils.Verify(l, utils.LoginVerify)
+//	if err != nil {
+//		response.FailWithMessage(err.Error(), c)
+//		return
+//	}
+//
+//	// 判断验证码是否开启
+//	openCaptchaTimeOut := global.GVA_CONFIG.Captcha.OpenCaptchaTimeOut // 缓存超时时间
+//	v, ok := global.BlackCache.Get(key)
+//	if !ok {
+//		global.BlackCache.Set(key, 1, time.Second*time.Duration(openCaptchaTimeOut))
+//	}
+//
+//	u := &system.SysUser{Username: l.Username, Password: l.Password}
+//
+//	user, err := userService.Login(u)
+//	if err != nil {
+//		global.GVA_LOG.Error("登陆失败! 用户名不存在或者密码错误!", zap.Error(err))
+//		// 验证码次数+1
+//		global.BlackCache.Increment(key, 1)
+//		response.FailWithMessage("用户名不存在或者密码错误", c)
+//		return
+//	}
+//	if user.Enable != 1 {
+//		global.GVA_LOG.Error("登陆失败! 用户被禁止登录!")
+//		// 验证码次数+1
+//		global.BlackCache.Increment(key, 1)
+//		response.FailWithMessage("用户被禁止登录", c)
+//		return
+//	}
+//	b.TokenNext(c, *user)
+//	return
+//
+//	// 验证码次数+1
+//	global.BlackCache.Increment(key, 1)
+//	response.FailWithMessage("验证码错误", c)
+//}
+
 // TokenNext 登录以后签发jwt
 func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
 	token, claims, err := utils.LoginToken(&user)
