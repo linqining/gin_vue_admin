@@ -86,12 +86,7 @@ func (user_infoService *UserService) UserGetCertificate(address string, certific
 	user := &user.User{
 		Address: &address,
 	}
-	err = global.GVA_DB.FirstOrCreate(user).Error
-	if err != nil {
-		return err
-	}
-
-	err = global.GVA_DB.Where("address = ?", address).First(user).Error
+	err = global.GVA_DB.Where("address=?", address).FirstOrCreate(user).Error
 	if err != nil {
 		return err
 	}
@@ -100,15 +95,11 @@ func (user_infoService *UserService) UserGetCertificate(address string, certific
 		Address: &certificateAddress,
 	}
 
-	err = global.GVA_DB.FirstOrCreate(certificate).Error
+	err = global.GVA_DB.Where("address=?", address).FirstOrCreate(certificate).Error
 	if err != nil {
 		return err
 	}
 
-	err = global.GVA_DB.Where("address = ?", certificateAddress).First(certificate).Error
-	if err != nil {
-		return err
-	}
 	userID := int(user.ID)
 	cerID := int(certificate.ID)
 	err = global.GVA_DB.Create(&user_certificate.UserCertificate{
