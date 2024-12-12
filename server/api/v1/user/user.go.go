@@ -195,3 +195,32 @@ func (user_infoApi *UserApi) LoginByAddress(c *gin.Context) {
 		"info": "不需要鉴权的用户接口信息",
 	}, "获取成功", c)
 }
+
+// GetUserPublic 不需要鉴权的用户接口
+// @Tags User
+// @Summary 不需要鉴权的用户接口
+// @accept application/json
+// @Produce application/json
+// @Success 200 {object} response.Response{data=object,msg=string} "获取成功"
+// @Router /user_info/UserGetCertificate [post]
+func (user_infoApi *UserApi) UserGetCertificate(c *gin.Context) {
+	// 此接口不需要鉴权
+	// 示例为返回了一个固定的消息接口，一般本接口用于C端服务，需要自己实现业务逻辑
+	type UserGetCertificate struct {
+		UserAddress string `json:"address"`
+		Certificate string `json:"certificate"`
+	}
+	var l UserGetCertificate
+	err := c.ShouldBindJSON(&l)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		data, _ := io.ReadAll(c.Request.Body)
+		log.Errorf("Bind json failed %s body:%s", err, string(data))
+		return
+	}
+
+	user_infoService.UserGetCertificate(l.UserAddress, l.Certificate)
+	response.OkWithDetailed(gin.H{
+		"info": "提交认证信息",
+	}, "获取成功", c)
+}

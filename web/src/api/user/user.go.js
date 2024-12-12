@@ -108,3 +108,15 @@ export const getUserPublic = () => {
     method: 'get',
   })
 }
+
+// @Summary 用户登录
+// @Produce  application/json
+// @Param data body {address:"string"}
+// @Router /user_info/getCertificate [post]
+export const getCertificate = (data) => {
+  return service({
+    url: '/user_info/getCertificate',
+    method: 'post',
+    data: data
+  })
+}

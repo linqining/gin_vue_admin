@@ -2,8 +2,10 @@ package user
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	certificate2 "github.com/flipped-aurora/gin-vue-admin/server/model/certificate"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/user"
 	userReq "github.com/flipped-aurora/gin-vue-admin/server/model/user/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/user_certificate"
 )
 
 type UserService struct{}
@@ -77,5 +79,41 @@ func (user_infoService *UserService) LoginByAddress(address string) (err error) 
 		Address: &address,
 	}
 	err = global.GVA_DB.FirstOrCreate(user).Error
+	return err
+}
+
+func (user_infoService *UserService) UserGetCertificate(address string, certificateAddress string) (err error) {
+	user := &user.User{
+		Address: &address,
+	}
+	err = global.GVA_DB.FirstOrCreate(user).Error
+	if err != nil {
+		return err
+	}
+
+	err = global.GVA_DB.Where("address = ?", address).First(user).Error
+	if err != nil {
+		return err
+	}
+
+	certificate := &certificate2.Certificate{
+		Address: &certificateAddress,
+	}
+
+	err = global.GVA_DB.FirstOrCreate(certificate).Error
+	if err != nil {
+		return err
+	}
+
+	err = global.GVA_DB.Where("address = ?", certificateAddress).First(certificate).Error
+	if err != nil {
+		return err
+	}
+	userID := int(user.ID)
+	cerID := int(certificate.ID)
+	err = global.GVA_DB.Create(&user_certificate.UserCertificate{
+		UserId:        &userID,
+		CertificateId: &cerID,
+	}).Error
 	return err
 }

@@ -398,7 +398,7 @@ const {isConnected, address, connect, disconnect, wallets} = useWalletState();
 import {TransactionBlock} from "@mysten/sui.js/transactions";
 const {signAndExecuteTransactionBlock, getExactlyCoinAmount} = useWalletActions()
 
-
+import {getCertificate } from "@/api/user/user.go"
 
 const  grantCFA =async () => {
   const txb = new TransactionBlock()
@@ -415,6 +415,7 @@ const  grantCFA =async () => {
       typeArguments: []
     })
     await signAndExecuteTransactionBlock(txb)
+    await getCertificate({"address":grantForm.value.address,"certificate":"0x52e42b171229db14d8cee617bd480f9ee6998a00802ff0438611e2a7393deee1"})
     grantDialogVisible.value = false
   } catch (e) {
     throw e

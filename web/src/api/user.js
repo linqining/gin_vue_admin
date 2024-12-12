@@ -179,3 +179,15 @@ export const resetPassword = (data) => {
     data: data
   })
 }
+
+// @Summary 用户登录
+// @Produce  application/json
+// @Param data body {address:"string"}
+// @Router /base/loginByAddress [post]
+export const loginByAddress = (data) => {
+  return service({
+    url: 'user_info/loginByAddress',
+    method: 'post',
+    data: data
+  })
+}

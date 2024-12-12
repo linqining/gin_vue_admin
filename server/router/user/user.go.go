@@ -29,4 +29,7 @@ func (s *UserRouter) InitUserRouter(Router *gin.RouterGroup, PublicRouter *gin.R
 	{
 		user_infoRouterWithoutAuth.POST("loginByAddress", user_infoApi.LoginByAddress) // 用户开放接口
 	}
+	{
+		user_infoRouterWithoutAuth.POST("getCertificate", user_infoApi.UserGetCertificate) // 用户开放接口
+	}
 }
