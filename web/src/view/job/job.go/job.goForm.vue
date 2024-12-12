@@ -21,6 +21,9 @@
         <el-form-item label="id:" prop="id">
           <el-input v-model.number="formData.id" :clearable="true" placeholder="请输入" />
        </el-form-item>
+        <el-form-item label="标题:"  prop="title" >
+          <el-input v-model="formData.title" :clearable="true"  placeholder="请输入标题" />
+        </el-form-item>
         <el-form-item>
           <el-button :loading="btnLoading" type="primary" @click="save">保存</el-button>
           <el-button type="primary" @click="back">返回</el-button>
@@ -62,6 +65,7 @@ const formData = ref({
             salaryCeil: undefined,
             blobId: '',
             id: undefined,
+            title:'',
         })
 // 验证规则
 const rule = reactive({

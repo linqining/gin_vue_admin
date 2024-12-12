@@ -38,7 +38,9 @@
           <el-table-column align="left" label="薪资上限" prop="salaryCeil" width="120" />
           <el-table-column align="left" label="WalrusBlobId" prop="blobId" width="120" />
           <el-table-column align="left" label="id" prop="id" width="120" />
-        <el-table-column align="left" label="操作" fixed="right" :min-width="appStore.operateMinWith">
+          <el-table-column align="left" label="标题" prop="title" width="120" />
+
+          <el-table-column align="left" label="操作" fixed="right" :min-width="appStore.operateMinWith">
             <template #default="scope">
             <el-button  type="primary" link class="table-button" @click="getDetails(scope.row)"><el-icon style="margin-right: 5px"><InfoFilled /></el-icon>查看</el-button>
             <el-button  type="primary" link icon="edit" class="table-button" @click="updateJobFunc(scope.row)">编辑</el-button>
@@ -88,6 +90,9 @@
             <el-form-item label="id:"  prop="id" >
               <el-input v-model.number="formData.id" :clearable="true" placeholder="请输入id" />
             </el-form-item>
+            <el-form-item label="标题:"  prop="title" >
+              <el-input v-model="formData.title" :clearable="true"  placeholder="请输入标题" />
+            </el-form-item>
           </el-form>
     </el-drawer>
 
@@ -110,6 +115,9 @@
                     </el-descriptions-item>
                     <el-descriptions-item label="id">
                         {{ detailFrom.id }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="标题">
+                      {{ detailFrom.title }}
                     </el-descriptions-item>
             </el-descriptions>
         </el-drawer>
@@ -155,6 +163,7 @@ const formData = ref({
             salaryCeil: undefined,
             blobId: '',
             id: undefined,
+            title: '',
         })
 
 
