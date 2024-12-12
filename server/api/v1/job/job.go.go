@@ -6,7 +6,6 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/job"
 	jobReq "github.com/flipped-aurora/gin-vue-admin/server/model/job/request"
 	"github.com/gin-gonic/gin"
-	"github.com/google/martian/log"
 	"go.uber.org/zap"
 	"io"
 )
@@ -184,7 +183,8 @@ func (job_infoApi *JobApi) ListJobs(c *gin.Context) {
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		data, _ := io.ReadAll(c.Request.Body)
-		log.Errorf("Bind json failed %s body:%s", err, string(data))
+		global.GVA_LOG.Error("Bind json failed error!", zap.Error(err), zap.String("data",
+			string(data)))
 		return
 	}
 	// 此接口不需要鉴权
