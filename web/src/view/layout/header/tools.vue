@@ -77,6 +77,8 @@
 
     <gva-setting v-model:drawer="showSettingDrawer"></gva-setting>
     <command-menu ref="command" />
+    <n-connect-button>链接</n-connect-button>
+
   </div>
 </template>
 
@@ -88,6 +90,8 @@
   import CommandMenu from '@/components/commandMenu/index.vue'
   import { toDoc } from '@/utils/doc'
 
+
+  import { NConnectButton} from "suiue";
   const appStore = useAppStore()
   const showSettingDrawer = ref(false)
   const showRefreshAnmite = ref(false)

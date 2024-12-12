@@ -3,9 +3,9 @@
     id="app"
     class="bg-gray-50 text-slate-700 dark:text-slate-500 dark:bg-slate-800"
   >
-    <el-config-provider :locale="zhCn">
-      <router-view />
-    </el-config-provider>
+      <el-config-provider :locale="zhCn">
+        <router-view />
+      </el-config-provider>
   </div>
 </template>
 

@@ -12,12 +12,17 @@ import '@/permission'
 import run from '@/core/gin-vue-admin.js'
 import auth from '@/directive/auth'
 import { store } from '@/pinia'
-import App from './App.vue'
+// import App from './App.vue'
 // 消除警告
 import 'default-passive-events'
+import VueSuiWallet from "vue-sui-wallet";
+import "../node_modules/vue-sui-wallet/dist/style.css";
 
-const app = createApp(App)
+import ProviderWrapper from "./ProviderWrapper.vue";
+import {createSuiue} from "suiue";
+
+const app = createApp(ProviderWrapper)
 app.config.productionTip = false
 
-app.use(run).use(ElementPlus).use(store).use(auth).use(router).mount('#app')
+app.use(createSuiue()).use(VueSuiWallet).use(run).use(ElementPlus).use(store).use(auth).use(router).mount('#app')
 export default app

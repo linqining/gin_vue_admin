@@ -46,7 +46,7 @@
         >
         <el-table-column type="selection" width="55" />
         
-        <el-table-column align="left" label="日期" prop="createdAt"width="180">
+        <el-table-column align="left" label="日期" prop="createdAt" width="180">
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
         
@@ -59,6 +59,7 @@
             <el-button  type="primary" link class="table-button" @click="getDetails(scope.row)"><el-icon style="margin-right: 5px"><InfoFilled /></el-icon>查看</el-button>
             <el-button  type="primary" link icon="edit" class="table-button" @click="updateCertificateFunc(scope.row)">编辑</el-button>
             <el-button   type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
+              <el-button   type="primary" link icon="edit" @click="grant(scope.row)">授权</el-button>
             </template>
         </el-table-column>
         </el-table>
@@ -101,6 +102,30 @@
           </el-form>
     </el-drawer>
 
+      <el-dialog title="授予" v-model="grantDialogVisible">
+          <div  style="margin-top:30px">
+            <el-form :model="grantForm">
+              <el-form-item label="地址" >
+                <el-input v-model="grantForm.address" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="姓名" >
+                <el-input v-model="grantForm.username" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="图片" >
+                <el-input v-model="grantForm.image" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="说明" >
+                <el-input v-model="grantForm.desc" autocomplete="off"></el-input>
+              </el-form-item>
+            </el-form>
+          </div>
+
+        <div class="dialog-footer">
+          <el-button @click="grantDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="grantCFA">确 定</el-button>
+        </div>
+      </el-dialog>
+
     <el-drawer destroy-on-close :size="appStore.drawerSize" v-model="detailShow" :show-close="true" :before-close="closeDetailShow" title="查看">
             <el-descriptions :column="1" border>
                     <el-descriptions-item label="sui objectID">
@@ -133,7 +158,7 @@ import {
 
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict ,filterDataSource, returnArrImg, onDownloadFile } from '@/utils/format'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox,ElDialog } from 'element-plus'
 import { ref, reactive } from 'vue'
 import { useAppStore } from "@/pinia"
 
@@ -366,6 +391,49 @@ const enterDialog = async () => {
                 getTableData()
               }
       })
+}
+
+import { useWalletState,useWalletActions} from "suiue"
+const {isConnected, address, connect, disconnect, wallets} = useWalletState();
+import {TransactionBlock} from "@mysten/sui.js/transactions";
+const {signAndExecuteTransactionBlock, getExactlyCoinAmount} = useWalletActions()
+
+
+
+const  grantCFA =async () => {
+  const txb = new TransactionBlock()
+  try {
+    txb.moveCall({
+      target: `0x52e42b171229db14d8cee617bd480f9ee6998a00802ff0438611e2a7393deee1::cfa::mint`,
+      arguments: [
+        txb.object('0x3c1202183304ad0c330c4429e4b1ff5ff8d8adbd01be06817cd974e24505ff15'), // clock object id
+          txb.pure.string(grantForm.value.username),
+        txb.pure.string(grantForm.value.image),
+          txb.pure.string(grantForm.value.desc),
+         txb.pure.address(grantForm.value.address),
+      ],
+      typeArguments: []
+    })
+    await signAndExecuteTransactionBlock(txb)
+    grantDialogVisible.value = false
+  } catch (e) {
+    throw e
+  }
+}
+
+
+const grantForm = ref({
+  address: '',
+  username:'',
+  desc:'',
+  image:'',
+})
+// 授权控制标记
+const grantDialogVisible = ref(false)
+
+const grant =  (row) => {
+  grantDialogVisible.value=true
+  console.log(row);
 }
 
 
