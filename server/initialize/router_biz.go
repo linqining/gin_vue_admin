@@ -36,9 +36,13 @@ func initBizRouter(routers ...*gin.RouterGroup) {
 	{
 		user_certificateRouter := router.RouterGroupApp.User_certificate
 		user_certificateRouter.InitUserCertificateRouter(privateGroup, publicGroup)
-	} // 占位方法，保证文件可以正确加载，避免go空变量检测报错，请勿删除。
+	}
 	{
 		employeeRouter := router.RouterGroupApp.Employee
 		employeeRouter.InitEmployeeRouter(privateGroup, publicGroup)
+	} // 占位方法，保证文件可以正确加载，避免go空变量检测报错，请勿删除。
+	{
+		achievementRouter := router.RouterGroupApp.Achievement
+		achievementRouter.InitAchievementRouter(privateGroup, publicGroup)
 	}
 }

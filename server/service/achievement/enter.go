@@ -1,4 +1,3 @@
 package achievement
 
-type ServiceGroup struct {
-}
+type ServiceGroup struct{ AchievementService }

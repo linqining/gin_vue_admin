@@ -17,6 +17,9 @@
       <el-date-picker v-model="searchInfo.endCreatedAt" type="datetime" placeholder="结束日期" :disabled-date="time=> searchInfo.startCreatedAt ? time.getTime() < searchInfo.startCreatedAt.getTime() : false"></el-date-picker>
       </el-form-item>
       
+        <el-form-item label="名称" prop="name">
+         <el-input v-model="searchInfo.name" placeholder="搜索条件" />
+        </el-form-item>
 
         <template v-if="showAllQuery">
           <!-- 将需要控制显示状态的查询条件添加到此范围内 -->
@@ -30,22 +33,6 @@
         </el-form-item>
       </el-form>
     </div>
-
-    <el-dialog title="授予" v-model="grantDialogVisible">
-      <div  style="margin-top:30px">
-        <el-form :model="grantForm">
-          <el-form-item label="金额" >
-            <el-input v-model="grantForm.amount" autocomplete="off"></el-input>
-          </el-form-item>
-        </el-form>
-      </div>
-
-      <div class="dialog-footer">
-        <el-button @click="grantDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="grantPrize">确 定</el-button>
-      </div>
-    </el-dialog>
-
     <div class="gva-table-box">
         <div class="gva-btn-list">
             <el-button  type="primary" icon="plus" @click="openDialog()">新增</el-button>
@@ -62,19 +49,17 @@
         >
         <el-table-column type="selection" width="55" />
         
-        <el-table-column align="left" label="日期" prop="createdAt" width="180">
+        <el-table-column align="left" label="日期" prop="createdAt"width="180">
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
         
-          <el-table-column align="left" label="用户名" prop="name" width="120" />
-          <el-table-column align="left" label="钱包地址" prop="address" width="120" />
-          <el-table-column align="left" label="头像" prop="avatar" width="120" />
+          <el-table-column align="left" label="名称" prop="name" width="120" />
+          <el-table-column align="left" label="图片" prop="image" width="120" />
         <el-table-column align="left" label="操作" fixed="right" :min-width="appStore.operateMinWith">
             <template #default="scope">
             <el-button  type="primary" link class="table-button" @click="getDetails(scope.row)"><el-icon style="margin-right: 5px"><InfoFilled /></el-icon>查看</el-button>
-            <el-button  type="primary" link icon="edit" class="table-button" @click="updateUserFunc(scope.row)">编辑</el-button>
+            <el-button  type="primary" link icon="edit" class="table-button" @click="updateAchievementFunc(scope.row)">编辑</el-button>
             <el-button   type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
-              <el-button   type="primary" link icon="edit" @click="grant(scope.row)">奖励</el-button>
             </template>
         </el-table-column>
         </el-table>
@@ -97,34 +82,27 @@
                 <div>
                   <el-button :loading="btnLoading" type="primary" @click="enterDialog">确 定</el-button>
                   <el-button @click="closeDialog">取 消</el-button>
-
                 </div>
               </div>
             </template>
 
           <el-form :model="formData" label-position="top" ref="elFormRef" :rules="rule" label-width="80px">
-            <el-form-item label="用户名:"  prop="name" >
-              <el-input v-model="formData.name" :clearable="true"  placeholder="请输入用户名" />
+            <el-form-item label="名称:"  prop="name" >
+              <el-input v-model="formData.name" :clearable="true"  placeholder="请输入名称" />
             </el-form-item>
-            <el-form-item label="钱包地址:"  prop="address" >
-              <el-input v-model="formData.address" :clearable="true"  placeholder="请输入钱包地址" />
-            </el-form-item>
-            <el-form-item label="头像:"  prop="avatar" >
-              <el-input v-model="formData.avatar" :clearable="true"  placeholder="请输入头像" />
+            <el-form-item label="图片:"  prop="image" >
+              <el-input v-model="formData.image" :clearable="true"  placeholder="请输入图片" />
             </el-form-item>
           </el-form>
     </el-drawer>
 
     <el-drawer destroy-on-close :size="appStore.drawerSize" v-model="detailShow" :show-close="true" :before-close="closeDetailShow" title="查看">
             <el-descriptions :column="1" border>
-                    <el-descriptions-item label="用户名">
+                    <el-descriptions-item label="名称">
                         {{ detailFrom.name }}
                     </el-descriptions-item>
-                    <el-descriptions-item label="钱包地址">
-                        {{ detailFrom.address }}
-                    </el-descriptions-item>
-                    <el-descriptions-item label="头像">
-                        {{ detailFrom.avatar }}
+                    <el-descriptions-item label="图片">
+                        {{ detailFrom.image }}
                     </el-descriptions-item>
             </el-descriptions>
         </el-drawer>
@@ -134,26 +112,25 @@
 
 <script setup>
 import {
-  createUser,
-  deleteUser,
-  deleteUserByIds,
-  updateUser,
-  findUser,
-  getUserList, getCertificate
-} from '@/api/user/user.go'
+  createAchievement,
+  deleteAchievement,
+  deleteAchievementByIds,
+  updateAchievement,
+  findAchievement,
+  getAchievementList
+} from '@/api/achievement/achievement'
 
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict ,filterDataSource, returnArrImg, onDownloadFile } from '@/utils/format'
-import {ElDialog, ElMessage, ElMessageBox} from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive } from 'vue'
 import { useAppStore } from "@/pinia"
-import {useWalletActions} from "suiue";
 
 
 
 
 defineOptions({
-    name: 'User'
+    name: 'Achievement'
 })
 
 // 提交按钮loading
@@ -166,15 +143,25 @@ const showAllQuery = ref(false)
 // 自动化生成的字典（可能为空）以及字段
 const formData = ref({
             name: '',
-            address: '',
-            avatar: '',
+            image: '',
         })
 
 
 
 // 验证规则
 const rule = reactive({
-               address : [{
+               name : [{
+                   required: true,
+                   message: '',
+                   trigger: ['input','blur'],
+               },
+               {
+                   whitespace: true,
+                   message: '不能只输入空格',
+                   trigger: ['input', 'blur'],
+              }
+              ],
+               image : [{
                    required: true,
                    message: '',
                    trigger: ['input','blur'],
@@ -202,43 +189,6 @@ const searchRule = reactive({
     }, trigger: 'change' }
   ],
 })
-
-const grantForm = ref({
-  "amount":0,
-})
-// 授权控制标记
-const grantDialogVisible = ref(false)
-const {signAndExecuteTransactionBlock, getExactlyCoinAmount} = useWalletActions()
-import {TransactionBlock} from "@mysten/sui.js/transactions";
-
-
-const grant =  (row) => {
-  grantDialogVisible.value=true
-  console.log(row);
-}
-
-const  grantPrize =async () => {
-  const txb = new TransactionBlock()
-  try {
-    txb.moveCall({
-      target: `0x52e42b171229db14d8cee617bd480f9ee6998a00802ff0438611e2a7393deee1::cfa::mint`,
-      arguments: [
-        txb.object('0x3c1202183304ad0c330c4429e4b1ff5ff8d8adbd01be06817cd974e24505ff15'), // clock object id
-        txb.pure.string(grantForm.value.username),
-        txb.pure.string(grantForm.value.image),
-        txb.pure.string(grantForm.value.desc),
-        txb.pure.address(grantForm.value.address),
-      ],
-      typeArguments: []
-    })
-    await signAndExecuteTransactionBlock(txb)
-    await getCertificate({"address":grantForm.value.address,"certificate":"0x52e42b171229db14d8cee617bd480f9ee6998a00802ff0438611e2a7393deee1"})
-    grantDialogVisible.value = false
-  } catch (e) {
-    throw e
-  }
-}
-
 
 const elFormRef = ref()
 const elSearchFormRef = ref()
@@ -278,7 +228,7 @@ const handleCurrentChange = (val) => {
 
 // 查询
 const getTableData = async() => {
-  const table = await getUserList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
+  const table = await getAchievementList({ page: page.value, pageSize: pageSize.value, ...searchInfo.value })
   if (table.code === 0) {
     tableData.value = table.data.list
     total.value = table.data.total
@@ -313,7 +263,7 @@ const deleteRow = (row) => {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(() => {
-            deleteUserFunc(row)
+            deleteAchievementFunc(row)
         })
     }
 
@@ -336,7 +286,7 @@ const onDelete = async() => {
         multipleSelection.value.map(item => {
           IDs.push(item.ID)
         })
-      const res = await deleteUserByIds({ IDs })
+      const res = await deleteAchievementByIds({ IDs })
       if (res.code === 0) {
         ElMessage({
           type: 'success',
@@ -354,8 +304,8 @@ const onDelete = async() => {
 const type = ref('')
 
 // 更新行
-const updateUserFunc = async(row) => {
-    const res = await findUser({ ID: row.ID })
+const updateAchievementFunc = async(row) => {
+    const res = await findAchievement({ ID: row.ID })
     type.value = 'update'
     if (res.code === 0) {
         formData.value = res.data
@@ -365,8 +315,8 @@ const updateUserFunc = async(row) => {
 
 
 // 删除行
-const deleteUserFunc = async (row) => {
-    const res = await deleteUser({ ID: row.ID })
+const deleteAchievementFunc = async (row) => {
+    const res = await deleteAchievement({ ID: row.ID })
     if (res.code === 0) {
         ElMessage({
                 type: 'success',
@@ -393,8 +343,7 @@ const closeDialog = () => {
     dialogFormVisible.value = false
     formData.value = {
         name: '',
-        address: '',
-        avatar: '',
+        image: '',
         }
 }
 // 弹窗确定
@@ -405,13 +354,13 @@ const enterDialog = async () => {
               let res
               switch (type.value) {
                 case 'create':
-                  res = await createUser(formData.value)
+                  res = await createAchievement(formData.value)
                   break
                 case 'update':
-                  res = await updateUser(formData.value)
+                  res = await updateAchievement(formData.value)
                   break
                 default:
-                  res = await createUser(formData.value)
+                  res = await createAchievement(formData.value)
                   break
               }
               btnLoading.value = false
@@ -442,7 +391,7 @@ const openDetailShow = () => {
 // 打开详情
 const getDetails = async (row) => {
   // 打开弹窗
-  const res = await findUser({ ID: row.ID })
+  const res = await findAchievement({ ID: row.ID })
   if (res.code === 0) {
     detailFrom.value = res.data
     openDetailShow()
