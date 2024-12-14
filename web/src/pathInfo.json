@@ -1,5 +1,7 @@
 {
   "/src/view/about/index.vue": "About",
+  "/src/view/achievement/achievement/achievement.vue": "Achievement",
+  "/src/view/achievement/achievement/achievementForm.vue": "AchievementForm",
   "/src/view/certificate/certificate.go/certificate.go.vue": "Certificate",
   "/src/view/certificate/certificate.go/certificate.goForm.vue": "CertificateForm",
   "/src/view/company/company.go/company.go.vue": "Company",

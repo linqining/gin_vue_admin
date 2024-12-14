@@ -49,13 +49,15 @@
         >
         <el-table-column type="selection" width="55" />
         
-        <el-table-column align="left" label="日期" prop="createdAt"width="180">
+        <el-table-column align="left" label="日期" prop="createdAt" width="180">
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
         
           <el-table-column align="left" label="名称" prop="name" width="120" />
           <el-table-column align="left" label="图片" prop="image" width="120" />
-        <el-table-column align="left" label="操作" fixed="right" :min-width="appStore.operateMinWith">
+          <el-table-column align="left" label="ObjectID" prop="objectID" width="120" />
+          <el-table-column align="left" label="digest" prop="digest" width="120" />
+          <el-table-column align="left" label="操作" fixed="right" :min-width="appStore.operateMinWith">
             <template #default="scope">
             <el-button  type="primary" link class="table-button" @click="getDetails(scope.row)"><el-icon style="margin-right: 5px"><InfoFilled /></el-icon>查看</el-button>
             <el-button  type="primary" link icon="edit" class="table-button" @click="updateAchievementFunc(scope.row)">编辑</el-button>
@@ -75,25 +77,33 @@
             />
         </div>
     </div>
+    <el-dialog></el-dialog>
     <el-drawer destroy-on-close :size="appStore.drawerSize" v-model="dialogFormVisible" :show-close="false" :before-close="closeDialog">
-       <template #header>
-              <div class="flex justify-between items-center">
-                <span class="text-lg">{{type==='create'?'新增':'编辑'}}</span>
-                <div>
-                  <el-button :loading="btnLoading" type="primary" @click="enterDialog">确 定</el-button>
-                  <el-button @click="closeDialog">取 消</el-button>
-                </div>
-              </div>
-            </template>
 
-          <el-form :model="formData" label-position="top" ref="elFormRef" :rules="rule" label-width="80px">
-            <el-form-item label="名称:"  prop="name" >
-              <el-input v-model="formData.name" :clearable="true"  placeholder="请输入名称" />
-            </el-form-item>
-            <el-form-item label="图片:"  prop="image" >
-              <el-input v-model="formData.image" :clearable="true"  placeholder="请输入图片" />
-            </el-form-item>
-          </el-form>
+        <template #header v-if="isConnected">
+          <div class="flex justify-between items-center">
+            <span class="text-lg">{{type==='create'?'新增':'编辑'}}</span>
+            <div>
+              <el-button :loading="btnLoading" type="primary" @click="enterDialog">确 定</el-button>
+              <el-button @click="closeDialog">取 消</el-button>
+            </div>
+          </div>
+        </template>
+
+        <el-form :model="formData" v-if="isConnected" s label-position="top" ref="elFormRef" :rules="rule" label-width="80px">
+          <el-form-item label="名称:"  prop="name" >
+            <el-input v-model="formData.name" :clearable="true"  placeholder="请输入名称" />
+          </el-form-item>
+          <el-form-item label="图片:"  prop="image" >
+            <el-input v-model="formData.image" :clearable="true"  placeholder="请输入图片" />
+          </el-form-item>
+        </el-form>
+        <div v-if="!isConnected">
+          <div>
+            <div>该功能先连接钱包</div>
+            <n-connect-button>链接钱包</n-connect-button>
+          </div>
+        </div>
     </el-drawer>
 
     <el-drawer destroy-on-close :size="appStore.drawerSize" v-model="detailShow" :show-close="true" :before-close="closeDetailShow" title="查看">
@@ -103,6 +113,9 @@
                     </el-descriptions-item>
                     <el-descriptions-item label="图片">
                         {{ detailFrom.image }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="ObjectID">
+                      {{ detailFrom.objectID }}
                     </el-descriptions-item>
             </el-descriptions>
         </el-drawer>
@@ -122,7 +135,8 @@ import {
 
 // 全量引入格式化工具 请按需保留
 import { getDictFunc, formatDate, formatBoolean, filterDict ,filterDataSource, returnArrImg, onDownloadFile } from '@/utils/format'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import {ElDialog, ElMessage, ElMessageBox} from 'element-plus'
+import {NConnectButton, useWalletActions, useWalletQuery} from "suiue";
 import { ref, reactive } from 'vue'
 import { useAppStore } from "@/pinia"
 
@@ -144,6 +158,7 @@ const showAllQuery = ref(false)
 const formData = ref({
             name: '',
             image: '',
+            digest:'',
         })
 
 
@@ -329,11 +344,28 @@ const deleteAchievementFunc = async (row) => {
     }
 }
 
+import { useWalletState} from "suiue"
+const {isConnected, address, connect, disconnect, wallet,} = useWalletState();
+const showWallets=()=>{
+  // console.log("wallet",BrowserWalletType)
+  // connect(wallet.)
+}
+showWallets()
+
+
 // 弹窗控制标记
 const dialogFormVisible = ref(false)
 
 // 打开弹窗
 const openDialog = () => {
+    if (!isConnected.value){
+      ElMessage({
+        type: 'warning',
+        message: '先连接钱包'
+      })
+      return
+    }
+
     type.value = 'create'
     dialogFormVisible.value = true
 }
@@ -346,33 +378,77 @@ const closeDialog = () => {
         image: '',
         }
 }
+import {TransactionBlock} from "@mysten/sui.js/transactions";
+const {signAndExecuteTransactionBlock} = useWalletActions()
+const {loadObjects} = useWalletQuery();
+
+
+const createAchievementSuiObj = async()=>{
+  const txb = new TransactionBlock()
+    txb.moveCall({
+      target: `0xe814d35068a021e7dfabee1610f4be0396bfe7a61606f8a270e76271c8b673ba::achievement::create_achievement_grant`,
+      arguments: [
+        txb.pure.string(formData.value.name),
+        txb.pure.string(formData.value.image),
+      ],
+      typeArguments: []
+    })
+    const AchievementGrantCap = "0xe814d35068a021e7dfabee1610f4be0396bfe7a61606f8a270e76271c8b673ba::achievement::AchievementGrantCap";
+
+    await signAndExecuteTransactionBlock(txb).then((digest)=>{
+      console.log(digest)
+      formData.value.digest = digest.digest;
+      // loadObjects(AchievementGrantCap).then((res)=>{
+      //   const objects = res[AchievementGrantCap];
+      //   for (var obj in objects){
+      //     if (obj.digest == digest.digest){
+      //       formData.value.objectID = obj.id;
+      //     }
+      //     console.log("other obj",obj)
+      //   }
+      //   console.log(res);
+      // })
+    })
+}
+
 // 弹窗确定
 const enterDialog = async () => {
-     btnLoading.value = true
-     elFormRef.value?.validate( async (valid) => {
-             if (!valid) return btnLoading.value = false
-              let res
-              switch (type.value) {
-                case 'create':
-                  res = await createAchievement(formData.value)
-                  break
-                case 'update':
-                  res = await updateAchievement(formData.value)
-                  break
-                default:
-                  res = await createAchievement(formData.value)
-                  break
-              }
-              btnLoading.value = false
-              if (res.code === 0) {
-                ElMessage({
-                  type: 'success',
-                  message: '创建/更改成功'
-                })
-                closeDialog()
-                getTableData()
-              }
-      })
+  if (!isConnected.value){
+    ElMessage({
+      type: 'warning',
+      message: '先连接钱包'
+    })
+    return
+  }
+
+   btnLoading.value = true
+  await createAchievementSuiObj()
+
+
+  elFormRef.value?.validate( async (valid) => {
+           if (!valid) return btnLoading.value = false
+            let res
+            switch (type.value) {
+              case 'create':
+                res = await createAchievement(formData.value)
+                break
+              case 'update':
+                res = await updateAchievement(formData.value)
+                break
+              default:
+                res = await createAchievement(formData.value)
+                break
+            }
+            btnLoading.value = false
+            if (res.code === 0) {
+              ElMessage({
+                type: 'success',
+                message: '创建/更改成功'
+              })
+              closeDialog()
+              getTableData()
+            }
+    })
 }
 
 

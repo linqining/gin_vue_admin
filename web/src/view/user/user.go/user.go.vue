@@ -147,7 +147,7 @@ import { getDictFunc, formatDate, formatBoolean, filterDict ,filterDataSource, r
 import {ElDialog, ElMessage, ElMessageBox} from 'element-plus'
 import { ref, reactive } from 'vue'
 import { useAppStore } from "@/pinia"
-import {useWalletActions} from "suiue";
+import {useWalletActions,useWalletQuery} from "suiue";
 
 
 
@@ -208,8 +208,9 @@ const grantForm = ref({
 })
 // 授权控制标记
 const grantDialogVisible = ref(false)
-const {signAndExecuteTransactionBlock, getExactlyCoinAmount} = useWalletActions()
+const {signAndExecuteTransactionBlock, signTransactionBlock,} = useWalletActions()
 import {TransactionBlock} from "@mysten/sui.js/transactions";
+const {objects,loadAllObjects,loadObjects} = useWalletQuery();
 
 
 const grant =  (row) => {
@@ -217,26 +218,60 @@ const grant =  (row) => {
   console.log(row);
 }
 
+const query = async ()=>{
+  await loadObjects("0xe814d35068a021e7dfabee1610f4be0396bfe7a61606f8a270e76271c8b673ba::achievement::Achievement").then((res)=>{
+    console.log(res);
+  })
+  console.log("objects",objects)
+  console.log("query end")
+
+}
+
+// await query()
+
+//todo 授权
 const  grantPrize =async () => {
-  const txb = new TransactionBlock()
-  try {
-    txb.moveCall({
-      target: `0x52e42b171229db14d8cee617bd480f9ee6998a00802ff0438611e2a7393deee1::cfa::mint`,
-      arguments: [
-        txb.object('0x3c1202183304ad0c330c4429e4b1ff5ff8d8adbd01be06817cd974e24505ff15'), // clock object id
-        txb.pure.string(grantForm.value.username),
-        txb.pure.string(grantForm.value.image),
-        txb.pure.string(grantForm.value.desc),
-        txb.pure.address(grantForm.value.address),
-      ],
-      typeArguments: []
-    })
-    await signAndExecuteTransactionBlock(txb)
-    await getCertificate({"address":grantForm.value.address,"certificate":"0x52e42b171229db14d8cee617bd480f9ee6998a00802ff0438611e2a7393deee1"})
-    grantDialogVisible.value = false
-  } catch (e) {
-    throw e
-  }
+  await query()
+  // const txb = new TransactionBlock()
+  // try {
+  //   txb.moveCall({
+  //     target: `0x52e42b171229db14d8cee617bd480f9ee6998a00802ff0438611e2a7393deee1::cfa::mint`,
+  //     arguments: [
+  //       txb.object('0x3c1202183304ad0c330c4429e4b1ff5ff8d8adbd01be06817cd974e24505ff15'), // clock object id
+  //       txb.pure.string("test"),
+  //       txb.pure.string(""),
+  //       txb.pure.string(""),
+  //       txb.pure.address("0x7caaf3d123266f92398b3b642682133098afa7017b3a74b7fd0442d0368ae595"),
+  //     ],
+  //     typeArguments: []
+  //   })
+  //   await signTransactionBlock(txb).then((digest)=>{
+  //     console.log(digest)
+  //
+  //   })
+    // await signAndExecuteTransactionBlock(txb)
+    // await  signAndExecuteTransactionBlock(
+    //     {
+    //       transaction: tx,
+    //     },
+    //     {
+    //       onSuccess: async ({ digest }) => {
+    //         const { effects } = await suiClient.waitForTransaction({
+    //           digest: digest,
+    //           options: {
+    //             showEffects: true,
+    //           },
+    //         });
+    //         console.log("transaction effects",effects)
+    //         // onCreated(effects?.created?.[0]?.reference?.objectId!);
+    //       },
+    //     },
+    // );
+    // await getCertificate({"address":grantForm.value.address,"certificate":"0x52e42b171229db14d8cee617bd480f9ee6998a00802ff0438611e2a7393deee1"})
+    // grantDialogVisible.value = false
+  // } catch (e) {
+  //   throw e
+  // }
 }
 
 
