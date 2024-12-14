@@ -19,6 +19,10 @@ func RunWindowsServer() {
 		initialize.RedisList()
 	}
 
+	if global.GVA_CONFIG.SuiCli.Endpoint != "" {
+		initialize.SuiClient()
+	}
+
 	if global.GVA_CONFIG.System.UseMongo {
 		err := initialize.Mongo.Initialization()
 		if err != nil {

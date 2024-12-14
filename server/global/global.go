@@ -2,6 +2,7 @@ package global
 
 import (
 	"fmt"
+	"github.com/block-vision/sui-go-sdk/sui"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -36,6 +37,7 @@ var (
 	GVA_ROUTERS             gin.RoutesInfo
 	GVA_ACTIVE_DBNAME       *string
 	BlackCache              local_cache.Cache
+	SuiClient               sui.ISuiAPI
 	lock                    sync.RWMutex
 )
 

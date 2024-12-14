@@ -197,6 +197,8 @@ redis-list:
         - 172.21.0.3:7000
         - 172.21.0.4:7001
         - 172.21.0.2:7002
+sui-cli:
+    endpoint: "https://sui-mainnet-endpoint.blockvision.org"
 sqlite:
     prefix: ""
     port: ""

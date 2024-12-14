@@ -54,9 +54,14 @@
         </el-table-column>
         
           <el-table-column align="left" label="名称" prop="name" width="120" />
-          <el-table-column align="left" label="图片" prop="image" width="120" />
+          <el-table-column align="left" label="图片"  width="120" >
+            <template #default="scope">
+              <el-image :src="scope.row.image" alt="图片" />
+            </template>
+          </el-table-column>
           <el-table-column align="left" label="ObjectID" prop="objectID" width="120" />
           <el-table-column align="left" label="digest" prop="digest" width="120" />
+          <el-table-column align="left" label="持有人地址" prop="ownerAddress" width="120" />
           <el-table-column align="left" label="操作" fixed="right" :min-width="appStore.operateMinWith">
             <template #default="scope">
             <el-button  type="primary" link class="table-button" @click="getDetails(scope.row)"><el-icon style="margin-right: 5px"><InfoFilled /></el-icon>查看</el-button>
@@ -116,6 +121,12 @@
                     </el-descriptions-item>
                     <el-descriptions-item label="ObjectID">
                       {{ detailFrom.objectID }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="digest">
+                      {{ detailFrom.digest }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="持有人地址">
+                      {{ detailFrom.ownerAddress }}
                     </el-descriptions-item>
             </el-descriptions>
         </el-drawer>

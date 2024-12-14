@@ -31,7 +31,7 @@ type Server struct {
 	Excel Excel `mapstructure:"excel" json:"excel" yaml:"excel"`
 
 	DiskList []DiskList `mapstructure:"disk-list" json:"disk-list" yaml:"disk-list"`
-
+	SuiCli   SuiCli     `mapstructure:"sui-cli" json:"sui-cli" yaml:"sui-cli"`
 	// 跨域配置
 	Cors CORS `mapstructure:"cors" json:"cors" yaml:"cors"`
 }
