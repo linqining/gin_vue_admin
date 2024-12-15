@@ -1,4 +1,3 @@
-
 package request
 
 import (
@@ -6,9 +5,10 @@ import (
 	"time"
 )
 
-type AchievementSearch struct{
-    StartCreatedAt *time.Time `json:"startCreatedAt" form:"startCreatedAt"`
-    EndCreatedAt   *time.Time `json:"endCreatedAt" form:"endCreatedAt"`
-    Name  *string `json:"name" form:"name" `
-    request.PageInfo
+type AchievementSearch struct {
+	StartCreatedAt *time.Time `json:"startCreatedAt" form:"startCreatedAt"`
+	EndCreatedAt   *time.Time `json:"endCreatedAt" form:"endCreatedAt"`
+	Name           *string    `json:"name" form:"name" `
+	OwnerAddress   *string    `json:"ownerAddress" form:"ownerAddress"` //持有人地址
+	request.PageInfo
 }

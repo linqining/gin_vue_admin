@@ -40,9 +40,13 @@ func initBizRouter(routers ...*gin.RouterGroup) {
 	{
 		employeeRouter := router.RouterGroupApp.Employee
 		employeeRouter.InitEmployeeRouter(privateGroup, publicGroup)
-	} // 占位方法，保证文件可以正确加载，避免go空变量检测报错，请勿删除。
+	}
 	{
 		achievementRouter := router.RouterGroupApp.Achievement
 		achievementRouter.InitAchievementRouter(privateGroup, publicGroup)
+	} // 占位方法，保证文件可以正确加载，避免go空变量检测报错，请勿删除。
+	{
+		achievement_logRouter := router.RouterGroupApp.Achievement_log
+		achievement_logRouter.InitAchievementLogRouter(privateGroup, publicGroup)
 	}
 }

@@ -54,6 +54,12 @@ func (job_infoService *JobService) GetJobInfoList(info jobReq.JobSearch) (list [
 	offset := info.PageSize * (info.Page - 1)
 	// 创建db
 	db := global.GVA_DB.Model(&job.Job{})
+	if info.SalaryBottom != nil {
+		db = db.Where("salary_bottom >= ?", *info.SalaryBottom)
+	}
+	if info.SalaryCeil != nil {
+		db = db.Where("salary_ceil <= ?", *info.SalaryCeil)
+	}
 	var job_infos []job.Job
 	// 如果有条件搜索 下方会自动创建搜索语句
 	err = db.Count(&total).Error

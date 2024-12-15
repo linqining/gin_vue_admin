@@ -24,7 +24,6 @@ func (achievement_infoService *AchievementService) CreateAchievement(achievement
 		for i := 0; i < 10; i++ {
 			rsp, err := global.SuiClient.SuiGetTransactionBlock(context.Background(), models.SuiGetTransactionBlockRequest{
 				Digest: *achievement_info.Digest,
-				// only fetch the effects field
 				Options: models.SuiTransactionBlockOptions{
 					ShowInput:          true,
 					ShowRawInput:       true,
@@ -107,6 +106,10 @@ func (achievement_infoService *AchievementService) GetAchievementInfoList(info a
 	}
 	if info.Name != nil && *info.Name != "" {
 		db = db.Where("name LIKE ?", "%"+*info.Name+"%")
+	}
+
+	if info.OwnerAddress != nil && *info.OwnerAddress != "" {
+		db = db.Where("owner_address = ?", *info.OwnerAddress)
 	}
 	err = db.Count(&total).Error
 	if err != nil {

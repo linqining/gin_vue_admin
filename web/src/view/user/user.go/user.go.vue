@@ -31,9 +31,25 @@
       </el-form>
     </div>
 
-    <el-dialog title="授予" v-model="grantDialogVisible">
+    <el-dialog title="授予奖励" v-model="grantDialogVisible">
+      <el-tag type="success">{{grantForm.grantUserAddr}}</el-tag>
       <div  style="margin-top:30px">
         <el-form :model="grantForm">
+          <el-form-item label="成就">
+            <el-select
+                v-model="grantForm.achievement" placeholder="请选择"
+                filterable
+                remote
+                :remote-method="searchAchievement"
+                :loading="loading">
+              <el-option
+                  v-for="item in achievementOptions"
+                  :key="item.ID"
+                  :label="item.name"
+                  :value="item">
+              </el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item label="金额" >
             <el-input v-model="grantForm.amount" autocomplete="off"></el-input>
           </el-form-item>
@@ -42,7 +58,7 @@
 
       <div class="dialog-footer">
         <el-button @click="grantDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="grantPrize">确 定</el-button>
+        <el-button type="primary" @click="grantAchievement">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -74,7 +90,7 @@
             <el-button  type="primary" link class="table-button" @click="getDetails(scope.row)"><el-icon style="margin-right: 5px"><InfoFilled /></el-icon>查看</el-button>
             <el-button  type="primary" link icon="edit" class="table-button" @click="updateUserFunc(scope.row)">编辑</el-button>
             <el-button   type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
-              <el-button   type="primary" link icon="edit" @click="grant(scope.row)">奖励</el-button>
+              <el-button   type="primary" link icon="trophy" @click="grant(scope.row)">奖励</el-button>
             </template>
         </el-table-column>
         </el-table>
@@ -147,7 +163,7 @@ import { getDictFunc, formatDate, formatBoolean, filterDict ,filterDataSource, r
 import {ElDialog, ElMessage, ElMessageBox} from 'element-plus'
 import { ref, reactive } from 'vue'
 import { useAppStore } from "@/pinia"
-import {useWalletActions,useWalletQuery} from "suiue";
+import {useWalletActions,useWalletQuery,useWalletState,consts} from "suiue";
 
 
 
@@ -204,18 +220,39 @@ const searchRule = reactive({
 })
 
 const grantForm = ref({
-  "amount":0,
+  amount:0,
+  achievement:{},
+  grantUserAddr:"",
 })
 // 授权控制标记
 const grantDialogVisible = ref(false)
-const {signAndExecuteTransactionBlock, signTransactionBlock,} = useWalletActions()
+
+const {signAndExecuteTransactionBlock, getExactlyCoinAmount} = useWalletActions()
+const {isConnected,address } = useWalletState();
 import {TransactionBlock} from "@mysten/sui.js/transactions";
 const {objects,loadAllObjects,loadObjects} = useWalletQuery();
 
 
 const grant =  (row) => {
   grantDialogVisible.value=true
+  grantForm.value.grantUserAddr = row.address
   console.log(row);
+}
+
+const achievementOptions =ref([])
+import {getAchievementList} from "@/api/achievement/achievement"
+const searchAchievement = async ()=>{
+  if (!isConnected.value){
+    ElMessage({
+      type: 'error',
+      message: '先连接钱包'
+    })
+    return
+  }
+  await getAchievementList({"ownerAddress": address._value}).then((res)=>{
+    console.log(res)
+    achievementOptions.value = res.data.list;
+  })
 }
 
 const query = async ()=>{
@@ -226,52 +263,39 @@ const query = async ()=>{
   console.log("query end")
 
 }
+import {createAchievementLog} from "@/api/achievement_log/achievement_log"
+const grantAchievement = async()=>{
+  console.log(grantForm.value)
+  const grantSuiAmount = grantForm.value.amount *consts.MIST_PER_SUI;
+  console.log(grantSuiAmount)
+  const txb = new TransactionBlock()
+  const [coin] = txb.splitCoins(txb.gas, [txb.pure(grantSuiAmount)]);
+  txb.moveCall({
+    target: `0xe814d35068a021e7dfabee1610f4be0396bfe7a61606f8a270e76271c8b673ba::achievement::grant_achievement`,
+    arguments: [
+      txb.object(grantForm.value.achievement.objectID),
+      coin,
+      txb.pure.address(grantForm.value.grantUserAddr),
+    ],
+    typeArguments: []
+  })
 
-// await query()
-
-//todo 授权
-const  grantPrize =async () => {
-  await query()
-  // const txb = new TransactionBlock()
-  // try {
-  //   txb.moveCall({
-  //     target: `0x52e42b171229db14d8cee617bd480f9ee6998a00802ff0438611e2a7393deee1::cfa::mint`,
-  //     arguments: [
-  //       txb.object('0x3c1202183304ad0c330c4429e4b1ff5ff8d8adbd01be06817cd974e24505ff15'), // clock object id
-  //       txb.pure.string("test"),
-  //       txb.pure.string(""),
-  //       txb.pure.string(""),
-  //       txb.pure.address("0x7caaf3d123266f92398b3b642682133098afa7017b3a74b7fd0442d0368ae595"),
-  //     ],
-  //     typeArguments: []
-  //   })
-  //   await signTransactionBlock(txb).then((digest)=>{
-  //     console.log(digest)
-  //
-  //   })
-    // await signAndExecuteTransactionBlock(txb)
-    // await  signAndExecuteTransactionBlock(
-    //     {
-    //       transaction: tx,
-    //     },
-    //     {
-    //       onSuccess: async ({ digest }) => {
-    //         const { effects } = await suiClient.waitForTransaction({
-    //           digest: digest,
-    //           options: {
-    //             showEffects: true,
-    //           },
-    //         });
-    //         console.log("transaction effects",effects)
-    //         // onCreated(effects?.created?.[0]?.reference?.objectId!);
-    //       },
-    //     },
-    // );
-    // await getCertificate({"address":grantForm.value.address,"certificate":"0x52e42b171229db14d8cee617bd480f9ee6998a00802ff0438611e2a7393deee1"})
-    // grantDialogVisible.value = false
-  // } catch (e) {
-  //   throw e
-  // }
+  await signAndExecuteTransactionBlock(txb).then((digest)=>{
+    console.log(digest)
+    console.log("发奖成功")
+    createAchievementLog({
+      digest: digest.digest,
+      receiver_address: grantForm.value.grantUserAddr,
+      sender_address: address._value,
+      sui_amount: grantSuiAmount,
+      achievement_name: grantForm.value.achievement.name,
+      achievement_image: grantForm.value.achievement.image,
+      achievement_id: grantForm.value.achievement.objectID,
+    }).then((res)=>{
+      console.log(res);
+      grantDialogVisible.value = false
+    })
+  })
 }
 
 

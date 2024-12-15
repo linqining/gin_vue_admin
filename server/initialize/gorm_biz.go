@@ -3,6 +3,7 @@ package initialize
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/achievement"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/achievement_log"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/certificate"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/company"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/employee"
@@ -14,7 +15,7 @@ import (
 
 func bizModel() error {
 	db := global.GVA_DB
-	err := db.AutoMigrate(company.Company{}, user.User{}, job.Job{}, certificate.Certificate{}, job_certificate.JobCertificate{}, user_certificate.UserCertificate{}, employee.Employee{}, achievement.Achievement{})
+	err := db.AutoMigrate(company.Company{}, user.User{}, job.Job{}, certificate.Certificate{}, job_certificate.JobCertificate{}, user_certificate.UserCertificate{}, employee.Employee{}, achievement.Achievement{}, achievement_log.AchievementLog{})
 	if err != nil {
 		return err
 	}

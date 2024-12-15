@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/achievement"
+	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/achievement_log"
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/certificate"
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/company"
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/employee"
@@ -26,4 +27,5 @@ type ApiGroup struct {
 	User_certificateApiGroup user_certificate.ApiGroup
 	EmployeeApiGroup         employee.ApiGroup
 	AchievementApiGroup      achievement.ApiGroup
+	Achievement_logApiGroup  achievement_log.ApiGroup
 }

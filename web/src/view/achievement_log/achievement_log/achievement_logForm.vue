@@ -3,28 +3,27 @@
   <div>
     <div class="gva-form-box">
       <el-form :model="formData" ref="elFormRef" label-position="right" :rules="rule" label-width="80px">
-        <el-form-item label="公司id:" prop="companyId">
-          <el-input v-model.number="formData.companyId" :clearable="true" placeholder="请输入" />
+        <el-form-item label="交易digest:" prop="digest">
+          <el-input v-model="formData.digest" :clearable="true"  placeholder="请输入交易digest" />
        </el-form-item>
-        <el-form-item label="标题:"  prop="title" >
-          <el-input v-model="formData.title" :clearable="true"  placeholder="请输入标题" />
-        </el-form-item>
-        <el-form-item label="职位描述:" prop="description">
-          <el-input v-model.number="formData.description" :clearable="true" placeholder="请输入" />
+        <el-form-item label="获奖人地址:" prop="receiver_address">
+          <el-input v-model="formData.receiver_address" :clearable="true"  placeholder="请输入获奖人地址" />
        </el-form-item>
-        <el-form-item label="薪资下限:"  prop="salaryBottom" >
-          <el-input v-model.number="formData.salaryBottom" :clearable="true" placeholder="请输入薪资下限" />
-        </el-form-item>
-        <el-form-item label="薪资上限:" prop="salaryCeil">
-          <el-input v-model.number="formData.salaryCeil" :clearable="true" placeholder="请输入" />
+        <el-form-item label="发奖人地址:" prop="sender_address">
+          <el-input v-model="formData.sender_address" :clearable="true"  placeholder="请输入发奖人地址" />
        </el-form-item>
-        <el-form-item label="WalrusBlobId:" prop="blobId">
-          <el-input v-model="formData.blobId" :clearable="true"  placeholder="请输入WalrusBlobId" />
+        <el-form-item label="奖金(SUI):" prop="sui_amount">
+          <el-input v-model.number="formData.sui_amount" :clearable="true" placeholder="请输入" />
        </el-form-item>
-
-        <el-form-item label="SuiObjectID:"  prop="objectID" >
-          <el-input v-model="formData.objectID" :clearable="true"  disabled/>
-        </el-form-item>
+        <el-form-item label="成就名:" prop="achievement_name">
+          <el-input v-model="formData.achievement_name" :clearable="true"  placeholder="请输入成就名" />
+       </el-form-item>
+        <el-form-item label="图片:" prop="achievement_image">
+          <el-input v-model="formData.achievement_image" :clearable="true"  placeholder="请输入图片" />
+       </el-form-item>
+        <el-form-item label="成就ObjectID:" prop="achievement_id">
+          <el-input v-model="formData.achievement_id" :clearable="true"  placeholder="请输入成就ObjectID" />
+       </el-form-item>
         <el-form-item>
           <el-button :loading="btnLoading" type="primary" @click="save">保存</el-button>
           <el-button type="primary" @click="back">返回</el-button>
@@ -36,13 +35,13 @@
 
 <script setup>
 import {
-  createJob,
-  updateJob,
-  findJob
-} from '@/api/job/job.go'
+  createAchievementLog,
+  updateAchievementLog,
+  findAchievementLog
+} from '@/api/achievement_log/achievement_log'
 
 defineOptions({
-    name: 'JobForm'
+    name: 'AchievementLogForm'
 })
 
 // 自动获取字典
@@ -60,13 +59,13 @@ const btnLoading = ref(false)
 
 const type = ref('')
 const formData = ref({
-            companyId: undefined,
-            description: undefined,
-            salaryBottom: undefined,
-            salaryCeil: undefined,
-            blobId: '',
-            title:'',
-            objectID: '',
+            digest: '',
+            receiver_address: '',
+            sender_address: '',
+            sui_amount: undefined,
+            achievement_name: '',
+            achievement_image: '',
+            achievement_id: '',
         })
 // 验证规则
 const rule = reactive({
@@ -78,7 +77,7 @@ const elFormRef = ref()
 const init = async () => {
  // 建议通过url传参获取目标数据ID 调用 find方法进行查询数据操作 从而决定本页面是create还是update 以下为id作为url参数示例
     if (route.query.id) {
-      const res = await findJob({ ID: route.query.id })
+      const res = await findAchievementLog({ ID: route.query.id })
       if (res.code === 0) {
         formData.value = res.data
         type.value = 'update'
@@ -97,13 +96,13 @@ const save = async() => {
             let res
            switch (type.value) {
              case 'create':
-               res = await createJob(formData.value)
+               res = await createAchievementLog(formData.value)
                break
              case 'update':
-               res = await updateJob(formData.value)
+               res = await updateAchievementLog(formData.value)
                break
              default:
-               res = await createJob(formData.value)
+               res = await createAchievementLog(formData.value)
                break
            }
            btnLoading.value = false

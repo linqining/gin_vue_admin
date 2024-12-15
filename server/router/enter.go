@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/router/achievement"
+	"github.com/flipped-aurora/gin-vue-admin/server/router/achievement_log"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/certificate"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/company"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/employee"
@@ -26,4 +27,5 @@ type RouterGroup struct {
 	User_certificate user_certificate.RouterGroup
 	Employee         employee.RouterGroup
 	Achievement      achievement.RouterGroup
+	Achievement_log  achievement_log.RouterGroup
 }

@@ -82,7 +82,6 @@
             />
         </div>
     </div>
-    <el-dialog></el-dialog>
     <el-drawer destroy-on-close :size="appStore.drawerSize" v-model="dialogFormVisible" :show-close="false" :before-close="closeDialog">
 
         <template #header v-if="isConnected">
@@ -409,16 +408,6 @@ const createAchievementSuiObj = async()=>{
     await signAndExecuteTransactionBlock(txb).then((digest)=>{
       console.log(digest)
       formData.value.digest = digest.digest;
-      // loadObjects(AchievementGrantCap).then((res)=>{
-      //   const objects = res[AchievementGrantCap];
-      //   for (var obj in objects){
-      //     if (obj.digest == digest.digest){
-      //       formData.value.objectID = obj.id;
-      //     }
-      //     console.log("other obj",obj)
-      //   }
-      //   console.log(res);
-      // })
     })
 }
 
@@ -426,7 +415,7 @@ const createAchievementSuiObj = async()=>{
 const enterDialog = async () => {
   if (!isConnected.value){
     ElMessage({
-      type: 'warning',
+      type: 'error',
       message: '先连接钱包'
     })
     return
