@@ -8,6 +8,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/service/employee"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/example"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/job"
+	"github.com/flipped-aurora/gin-vue-admin/server/service/job_application"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/job_certificate"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/system"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/user"
@@ -28,4 +29,5 @@ type ServiceGroup struct {
 	EmployeeServiceGroup         employee.ServiceGroup
 	AchievementServiceGroup      achievement.ServiceGroup
 	Achievement_logServiceGroup  achievement_log.ServiceGroup
+	Job_applicationServiceGroup  job_application.ServiceGroup
 }

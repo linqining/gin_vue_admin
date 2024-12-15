@@ -8,6 +8,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/employee"
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/example"
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/job"
+	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/job_application"
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/job_certificate"
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/system"
 	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/user"
@@ -28,4 +29,5 @@ type ApiGroup struct {
 	EmployeeApiGroup         employee.ApiGroup
 	AchievementApiGroup      achievement.ApiGroup
 	Achievement_logApiGroup  achievement_log.ApiGroup
+	Job_applicationApiGroup  job_application.ApiGroup
 }

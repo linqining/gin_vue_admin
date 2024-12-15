@@ -8,6 +8,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/router/employee"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/example"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/job"
+	"github.com/flipped-aurora/gin-vue-admin/server/router/job_application"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/job_certificate"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/system"
 	"github.com/flipped-aurora/gin-vue-admin/server/router/user"
@@ -28,4 +29,5 @@ type RouterGroup struct {
 	Employee         employee.RouterGroup
 	Achievement      achievement.RouterGroup
 	Achievement_log  achievement_log.RouterGroup
+	Job_application  job_application.RouterGroup
 }
