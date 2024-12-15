@@ -3,6 +3,9 @@
   <div>
     <div class="gva-form-box">
       <el-form :model="formData" ref="elFormRef" label-position="right" :rules="rule" label-width="80px">
+        <el-form-item label="Logo:"  prop="logo" >
+          <el-input v-model="formData.logo" :clearable="true"  placeholder="请输入Logo" />
+        </el-form-item>
         <el-form-item label="地址:" prop="walletAddress">
           <el-input v-model="formData.walletAddress" :clearable="true"  placeholder="请输入地址" />
        </el-form-item>
@@ -50,6 +53,7 @@ const formData = ref({
             walletAddress: '',
             name: '',
             status: undefined,
+            logo: '',
         })
 // 验证规则
 const rule = reactive({

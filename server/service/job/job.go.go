@@ -79,9 +79,14 @@ func (job_infoService *JobService) GetJobPublic() {
 	// 请自行实现
 }
 
+type JobListItem struct {
+	job.Job
+	Logo *string `json:"logo" form:"logo" gorm:"column:logo;comment:;size:100;"` //Logo
+}
+
 // GetJobInfoList 分页获取职位记录
 // Author [yourname](https://github.com/yourname)
-func (job_infoService *JobService) ListJobs(address string) (list []job.Job, total int64, err error) {
+func (job_infoService *JobService) ListJobs(address string) (list []JobListItem, total int64, err error) {
 	if address == "" {
 		return nil, 0, nil
 	}
@@ -107,15 +112,15 @@ func (job_infoService *JobService) ListJobs(address string) (list []job.Job, tot
 
 	// 创建db
 	jobDB := global.GVA_DB.Model(&job.Job{})
-	var job_infos []job.Job
-	// 如果有条件搜索 下方会自动创建搜索语句
+	jobDB = jobDB.Joins("left join job_certificate on job_certificate.job_id = job.id inner join company on company.id = job.company_id").
+		Where("certificate_id is null or certificate_id in ?", userCertificateIDs).Select("job.*,company.logo")
+
 	err = jobDB.Count(&total).Error
 	if err != nil {
 		return
 	}
 	log.Infof("total %v", total)
-
-	jobDB = jobDB.Joins("left join job_certificate on job_certificate.job_id = job.id").Where("certificate_id is null or certificate_id in ?", userCertificateIDs)
+	var job_infos []JobListItem
 	err = jobDB.Find(&job_infos).Error
 	return job_infos, total, err
 }

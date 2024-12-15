@@ -49,10 +49,13 @@
         >
         <el-table-column type="selection" width="55" />
         
-        <el-table-column align="left" label="日期" prop="createdAt"width="180">
+        <el-table-column align="left" label="日期" prop="createdAt" width="180">
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
-        
+          <el-table-column align="left" label="Logo" width="120" v-slot="scope">
+            <el-image :src="scope.row.logo"></el-image>
+          </el-table-column>
+
           <el-table-column align="left" label="地址" prop="walletAddress" width="120" />
           <el-table-column align="left" label="公司名" prop="name" width="120" />
           <el-table-column align="left" label="状态" prop="status" width="120" />
@@ -88,6 +91,9 @@
             </template>
 
           <el-form :model="formData" label-position="top" ref="elFormRef" :rules="rule" label-width="80px">
+            <el-form-item label="Logo:"  prop="logo" >
+              <el-input v-model="formData.logo" :clearable="true"  placeholder="请输入Logo" />
+            </el-form-item>
             <el-form-item label="地址:"  prop="walletAddress" >
               <el-input v-model="formData.walletAddress" :clearable="true"  placeholder="请输入地址" />
             </el-form-item>
@@ -102,6 +108,9 @@
 
     <el-drawer destroy-on-close :size="appStore.drawerSize" v-model="detailShow" :show-close="true" :before-close="closeDetailShow" title="查看">
             <el-descriptions :column="1" border>
+                    <el-descriptions-item label="Logo">
+                      {{ detailFrom.logo }}
+                    </el-descriptions-item>
                     <el-descriptions-item label="地址">
                         {{ detailFrom.walletAddress }}
                     </el-descriptions-item>
@@ -152,6 +161,7 @@ const formData = ref({
             walletAddress: '',
             name: '',
             status: undefined,
+            logo: '',
         })
 
 
@@ -328,10 +338,11 @@ const openDialog = () => {
 const closeDialog = () => {
     dialogFormVisible.value = false
     formData.value = {
-        walletAddress: '',
-        name: '',
-        status: undefined,
-        }
+      walletAddress: '',
+      name: '',
+      status: undefined,
+      logo: '',
+    }
 }
 // 弹窗确定
 const enterDialog = async () => {
