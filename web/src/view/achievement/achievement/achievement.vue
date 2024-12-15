@@ -390,7 +390,6 @@ const closeDialog = () => {
 }
 import {TransactionBlock} from "@mysten/sui.js/transactions";
 const {signAndExecuteTransactionBlock} = useWalletActions()
-const {loadObjects} = useWalletQuery();
 
 
 const createAchievementSuiObj = async()=>{

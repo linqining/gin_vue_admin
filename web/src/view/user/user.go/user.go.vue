@@ -163,7 +163,7 @@ import { getDictFunc, formatDate, formatBoolean, filterDict ,filterDataSource, r
 import {ElDialog, ElMessage, ElMessageBox} from 'element-plus'
 import { ref, reactive } from 'vue'
 import { useAppStore } from "@/pinia"
-import {useWalletActions,useWalletQuery,useWalletState,consts} from "suiue";
+import {useWalletActions,useWalletState,consts} from "suiue";
 
 
 
@@ -227,10 +227,10 @@ const grantForm = ref({
 // 授权控制标记
 const grantDialogVisible = ref(false)
 
-const {signAndExecuteTransactionBlock, getExactlyCoinAmount} = useWalletActions()
+const {signAndExecuteTransactionBlock} = useWalletActions()
 const {isConnected,address } = useWalletState();
 import {TransactionBlock} from "@mysten/sui.js/transactions";
-const {objects,loadAllObjects,loadObjects} = useWalletQuery();
+// const {objects,loadAllObjects,loadObjects} = useWalletQuery();
 
 
 const grant =  (row) => {
@@ -255,14 +255,6 @@ const searchAchievement = async ()=>{
   })
 }
 
-const query = async ()=>{
-  await loadObjects("0xe814d35068a021e7dfabee1610f4be0396bfe7a61606f8a270e76271c8b673ba::achievement::Achievement").then((res)=>{
-    console.log(res);
-  })
-  console.log("objects",objects)
-  console.log("query end")
-
-}
 import {createAchievementLog} from "@/api/achievement_log/achievement_log"
 const grantAchievement = async()=>{
   console.log(grantForm.value)

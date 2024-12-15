@@ -202,3 +202,23 @@ func (job_infoApi *JobApi) ListJobs(c *gin.Context) {
 		//PageSize: pageInfo.PageSize,
 	}, "获取成功", c)
 }
+
+// GetJob getJob
+// @Tags Job
+// @Summary getJob
+// @accept application/json
+// @Produce application/json
+// @Param data query jobReq.JobSearch true "成功"
+// @Success 200 {object} response.Response{data=object,msg=string} "成功"
+// @Router /job_info/getJob [GET]
+func (job_infoApi *JobApi) GetJob(c *gin.Context) {
+	// 请添加自己的业务逻辑
+	id := c.Query("id")
+	rejob_info, err := job_infoService.GetJob(id)
+	if err != nil {
+		global.GVA_LOG.Error("查询失败!", zap.Error(err))
+		response.FailWithMessage("查询失败:"+err.Error(), c)
+		return
+	}
+	response.OkWithData(rejob_info, c)
+}

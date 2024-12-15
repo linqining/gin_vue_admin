@@ -42,6 +42,26 @@
         </el-form-item>
       </el-form>
     </div>
+
+    <el-dialog title="发放Offer" v-model="grantDialogVisible">
+      <el-tag type="success">{{ grantOfferForm.grantUserAddr }}</el-tag>
+      <div  style="margin-top:30px">
+        <el-form :model="grantOfferForm">
+          <el-form-item label="截止时间" >
+            <el-date-picker
+                required
+                v-model="grantOfferForm.deadline"
+                type="datetime"
+                placeholder="Select date and time"
+            />
+          </el-form-item>
+        </el-form>
+      </div>
+      <div class="dialog-footer">
+        <el-button @click="grantDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="grantOffer">确 定</el-button>
+      </div>
+    </el-dialog>
     <div class="gva-table-box">
         <div class="gva-btn-list">
             <el-button  type="primary" icon="plus" @click="openDialog()">新增</el-button>
@@ -65,16 +85,22 @@
           <el-table-column align="left" label="申请人钱包地址" prop="address" width="120" />
           <el-table-column align="left" label="申请人名字" prop="name" width="120" />
           <el-table-column align="left" label="自我介绍" prop="introduction" width="120" />
-          <el-table-column align="left" label="简历blobID" prop="resumeBlobId" width="120" />
+          <el-table-column align="left" label="简历blobID" prop="resumeBlobId" width="120" v-slot="scope">
+              <el-link v-if="scope.row.resumeBlobId" :href="'https://aggregator.walrus-testnet.walrus.space/v1/'+scope.row.resumeBlobId">下载简历</el-link>
+          </el-table-column>
+
           <el-table-column align="left" label="电话" prop="phone" width="120" />
           <el-table-column align="left" label="邮箱" prop="email" width="120" />
           <el-table-column align="left" label="简历ObjectId" prop="suiObjectId" width="120" />
           <el-table-column align="left" label="文件类型" prop="mediaType" width="120" />
-        <el-table-column align="left" label="操作" fixed="right" :min-width="appStore.operateMinWith">
+          <el-table-column align="left" label="offer交易摘要" prop="offerDigest" width="120" />
+
+          <el-table-column align="left" label="操作" fixed="right" :min-width="appStore.operateMinWith">
             <template #default="scope">
             <el-button  type="primary" link class="table-button" @click="getDetails(scope.row)"><el-icon style="margin-right: 5px"><InfoFilled /></el-icon>查看</el-button>
             <el-button  type="primary" link icon="edit" class="table-button" @click="updateJobApplicationFunc(scope.row)">编辑</el-button>
             <el-button   type="primary" link icon="delete" @click="deleteRow(scope.row)">删除</el-button>
+              <el-button   type="primary" link icon="document" @click="openGrantDialog(scope.row)">发放Offer</el-button>
             </template>
         </el-table-column>
         </el-table>
@@ -161,6 +187,9 @@
               <el-descriptions-item label="文件类型">
                 {{ detailFrom.mediaType }}
               </el-descriptions-item>
+              <el-descriptions-item label="offer交易摘要">
+                {{ detailFrom.offerDigest }}
+              </el-descriptions-item>
             </el-descriptions>
         </el-drawer>
 
@@ -178,10 +207,12 @@ import {
 } from '@/api/job_application/job_application'
 
 // 全量引入格式化工具 请按需保留
-import { getDictFunc, formatDate, formatBoolean, filterDict ,filterDataSource, returnArrImg, onDownloadFile } from '@/utils/format'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { formatDate } from '@/utils/format'
+import {ElDialog, ElImage, ElMessage, ElMessageBox} from 'element-plus'
 import { ref, reactive } from 'vue'
 import { useAppStore } from "@/pinia"
+import { useWalletActions,useWalletState} from "suiue";
+
 
 
 
@@ -208,7 +239,7 @@ const formData = ref({
             suiObjectId: '',
             mediaType: '',
             jobId: undefined,
-
+            offerDigest: '',
 })
 
 
@@ -394,6 +425,7 @@ const closeDialog = () => {
         suiObjectId: '',
         mediaType: '',
         jobId: undefined,
+        offerDigest: '',
     }
 }
 // 弹窗确定
@@ -455,9 +487,91 @@ const closeDetailShow = () => {
   detailFrom.value = {}
 }
 
+import {getJob} from "@/api/job/job.go";
+
+const {isConnected} = useWalletState();
+
+const grantDialogVisible = ref(false)
+
+const openGrantDialog =  (row) => {
+  if (!isConnected.value){
+    ElMessage({
+      type: 'error',
+      message: '先连接钱包'
+    })
+    return
+  }
+  grantOfferForm.value.grantUserAddr = row.address;
+  grantOfferForm.value.applicationID = row.ID;
+  getJob({ id: row.jobId }).then((result)=>{
+    console.log("result",result);
+    if (result.code === 0) {
+      grantOfferForm.value.jobBlobID = result.data.blobId;
+    }else{
+      ElMessage({
+        type:"error",
+        message: result.msg,
+      })
+      return
+    }
+  }).catch((e)=>{
+    console.log(e)
+    return
+  })
+
+  console.log(grantOfferForm);
+  grantDialogVisible.value=true
+}
+
+
+import {updateDigest} from "@/api/job_application/job_application"
+
+const grantOfferForm = ref({
+  deadline: undefined, // offer的截止时间
+  grantUserAddr:'', //
+  jobBlobID: '',
+  applicationID:0,
+})
+
+import {TransactionBlock} from "@mysten/sui.js/transactions";
+const {signAndExecuteTransactionBlock} = useWalletActions()
+
+// 给申请人发放offer
+const grantOffer = async()=>{
+  console.log(grantOfferForm.value)
+  if (!grantOfferForm.value.deadline){
+    ElMessage({
+      type: 'error',
+      message: '请选择日期'
+    })
+    return
+  }
+  console.log(grantOfferForm.value.deadline.getTime());
+  const txb = new TransactionBlock()
+  txb.moveCall({
+    target: `0x26bc54dfd98b7d552897531b4dc38eeff15ade647fe7379c09cf5614d13a4520::offer::offer`,
+    arguments: [
+      txb.pure.address(grantOfferForm.value.grantUserAddr),
+      txb.pure.string(grantOfferForm.value.jobBlobID),
+      txb.pure.u64(grantOfferForm.value.deadline.getTime()),
+    ],
+    typeArguments: []
+  })
+
+  await signAndExecuteTransactionBlock(txb).then((digest)=>{
+    console.log(digest)
+    ElMessage({
+      type: 'success',
+      message: '发奖Offer成功'
+    })
+    updateDigest({
+      id: grantOfferForm.value.applicationID,
+      offerDigest: digest.digest,
+    }).then((res)=>{
+      console.log(res);
+      grantDialogVisible.value = false
+    })
+  })
+}
 
 </script>
-
-<style>
-
-</style>

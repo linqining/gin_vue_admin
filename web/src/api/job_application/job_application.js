@@ -121,3 +121,17 @@ export const userApply = () => {
     method: 'POST'
   })
 }
+// UpdateDigest Offer交易摘要回填
+// @Tags JobApplication
+// @Summary Offer交易摘要回填
+// @accept application/json
+// @Produce application/json
+// @Success 200 {object} response.Response{data=object,msg=string} "成功"
+// @Router /jobApplication/updateDigest [POST]
+export const updateDigest = (data) => {
+  return service({
+    url: '/jobApplication/updateDigest',
+    method: 'POST',
+    data
+  })
+}

@@ -190,3 +190,27 @@ func (jobApplicationApi *JobApplicationApi) UserApply(c *gin.Context) {
 	response.OkWithMessage("创建成功", c)
 
 }
+
+// UpdateDigest Offer交易摘要回填
+// @Tags JobApplication
+// @Summary Offer交易摘要回填
+// @accept application/json
+// @Produce application/json
+// @Param data query job_applicationReq.JobApplicationSearch true "成功"
+// @Success 200 {object} response.Response{data=object,msg=string} "成功"
+// @Router /jobApplication/updateDigest [POST]
+func (jobApplicationApi *JobApplicationApi) UpdateDigest(c *gin.Context) {
+	var jobApplication job_application.JobApplication
+	err := c.ShouldBindJSON(&jobApplication)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	err = jobApplicationService.UpdateDigest(jobApplication)
+	if err != nil {
+		global.GVA_LOG.Error("更新失败!", zap.Error(err))
+		response.FailWithMessage("更新失败:"+err.Error(), c)
+		return
+	}
+	response.OkWithMessage("更新成功", c)
+}

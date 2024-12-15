@@ -24,5 +24,6 @@ func (s *JobApplicationRouter) InitJobApplicationRouter(Router *gin.RouterGroup,
 	{
 		jobApplicationRouterWithoutAuth.GET("getJobApplicationPublic", jobApplicationApi.GetJobApplicationPublic)
 		jobApplicationRouterWithoutAuth.POST("userApply", jobApplicationApi.UserApply)
+		jobApplicationRouterWithoutAuth.POST("updateDigest", jobApplicationApi.UpdateDigest)
 	}
 }

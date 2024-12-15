@@ -108,3 +108,17 @@ export const getJobPublic = () => {
     method: 'get',
   })
 }
+// GetJob getJob
+// @Tags Job
+// @Summary getJob
+// @accept application/json
+// @Produce application/json
+// @Success 200 {object} response.Response{data=object,msg=string} "成功"
+// @Router /job_info/getJob [GET]
+export const getJob = (params) => {
+  return service({
+    url: '/job_info/getJob',
+    method: 'GET',
+    params
+  })
+}

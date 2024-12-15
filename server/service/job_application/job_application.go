@@ -100,3 +100,9 @@ func (jobApplicationService *JobApplicationService) UserApply(jobApplication *jo
 	err = global.GVA_DB.Create(jobApplication).Error
 	return err
 }
+
+// UpdateDigest Offer交易摘要回填
+// Author [yourname](https://github.com/yourname)
+func (jobApplicationService *JobApplicationService) UpdateDigest(jobApplication job_application.JobApplication) (err error) {
+	return jobApplicationService.UpdateJobApplication(jobApplication)
+}

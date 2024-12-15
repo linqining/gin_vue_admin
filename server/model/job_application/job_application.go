@@ -17,6 +17,7 @@ type JobApplication struct {
 	SuiObjectId  *string `json:"suiObjectId" form:"suiObjectId" gorm:"column:sui_object_id;comment:;size:100;"`    //简历ObjectId
 	MediaType    *string `json:"mediaType" form:"mediaType" gorm:"column:media_type;comment:;size:20;"`            //文件类型
 	JobId        *int    `json:"jobId" form:"jobId" gorm:"column:job_id;comment:;size:32;"`                        //JobID
+	OfferDigest  *string `json:"offerDigest" form:"offerDigest" gorm:"column:offer_digest;comment:;size:100;"`     //offer交易摘要
 }
 
 // TableName 职位申请 JobApplication自定义表名 job_application
