@@ -549,7 +549,7 @@ const grantOffer = async()=>{
   console.log(grantOfferForm.value.deadline.getTime());
   const txb = new TransactionBlock()
   txb.moveCall({
-    target: `0x26bc54dfd98b7d552897531b4dc38eeff15ade647fe7379c09cf5614d13a4520::offer::offer`,
+    target: `0x5288956e80169697c8ce0e268bb6361963d69b2bc5041857d8427772baee1bbb::offer::offer`,
     arguments: [
       txb.pure.address(grantOfferForm.value.grantUserAddr),
       txb.pure.string(grantOfferForm.value.jobBlobID),

@@ -46,12 +46,14 @@
         >
         <el-table-column type="selection" width="55" />
         
-        <el-table-column align="left" label="日期" prop="createdAt"width="180">
+        <el-table-column align="left" label="日期" prop="createdAt" width="180">
             <template #default="scope">{{ formatDate(scope.row.CreatedAt) }}</template>
         </el-table-column>
         
           <el-table-column align="left" label="用户id" prop="userId" width="120" />
           <el-table-column align="left" label="CompanyId" prop="companyId" width="120" />
+          <el-table-column align="left" label="合同交易摘要" prop="digest" width="120" />
+          <el-table-column align="left" label="合同ObjectID" prop="contractObjectId" width="120" />
         <el-table-column align="left" label="操作" fixed="right" :min-width="appStore.operateMinWith">
             <template #default="scope">
             <el-button  type="primary" link class="table-button" @click="getDetails(scope.row)"><el-icon style="margin-right: 5px"><InfoFilled /></el-icon>查看</el-button>
@@ -101,6 +103,12 @@
                     <el-descriptions-item label="CompanyId">
                         {{ detailFrom.companyId }}
                     </el-descriptions-item>
+              <el-descriptions-item label="合同交易摘要">
+                {{ detailFrom.digest }}
+              </el-descriptions-item>
+              <el-descriptions-item label="合同ObjectID">
+                {{ detailFrom.contractObjectId }}
+              </el-descriptions-item>
             </el-descriptions>
         </el-drawer>
 
@@ -141,6 +149,8 @@ const showAllQuery = ref(false)
 const formData = ref({
             userId: undefined,
             companyId: undefined,
+            digest: '',
+            contractObjectId: '',
         })
 
 

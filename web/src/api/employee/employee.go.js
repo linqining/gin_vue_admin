@@ -108,3 +108,17 @@ export const getEmployeePublic = () => {
     method: 'get',
   })
 }
+// UpdateContractDigest 回填合同交易摘要
+// @Tags Employee
+// @Summary 回填合同交易摘要
+// @accept application/json
+// @Produce application/json
+// @Success 200 {object} response.Response{data=object,msg=string} "成功"
+// @Router /employeeInfo/updateContractDigest [POST]
+export const updateContractDigest = (data) => {
+  return service({
+    url: '/employeeInfo/updateContractDigest',
+    method: 'POST',
+    data
+  })
+}

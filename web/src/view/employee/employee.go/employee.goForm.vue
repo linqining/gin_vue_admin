@@ -9,6 +9,12 @@
         <el-form-item label="CompanyId:" prop="companyId">
           <el-input v-model.number="formData.companyId" :clearable="true" placeholder="请输入" />
        </el-form-item>
+        <el-form-item label="合同交易摘要:"  prop="digest" >
+          <el-input v-model="formData.digest" :clearable="true"  placeholder="请输入合同交易摘要" />
+        </el-form-item>
+        <el-form-item label="合同ObjectID:"  prop="contractObjectId" >
+          <el-input v-model="formData.contractObjectId" :clearable="true"  placeholder="请输入合同ObjectID" />
+        </el-form-item>
         <el-form-item>
           <el-button :loading="btnLoading" type="primary" @click="save">保存</el-button>
           <el-button type="primary" @click="back">返回</el-button>
@@ -46,6 +52,8 @@ const type = ref('')
 const formData = ref({
             userId: undefined,
             companyId: undefined,
+            digest: '',
+            contractObjectId: '',
         })
 // 验证规则
 const rule = reactive({
