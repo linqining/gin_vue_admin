@@ -83,10 +83,11 @@ func (user_infoService *UserService) LoginByAddress(address string) (err error) 
 }
 
 func (user_infoService *UserService) UserGetCertificate(address string, certificateAddress string) (err error) {
+	userModel := global.GVA_DB.Model(&user.User{})
 	user := &user.User{
 		Address: &address,
 	}
-	err = global.GVA_DB.Where("address=?", address).FirstOrCreate(user).Error
+	err = userModel.Where("address=?", address).FirstOrCreate(user).Error
 	if err != nil {
 		return err
 	}
@@ -95,7 +96,7 @@ func (user_infoService *UserService) UserGetCertificate(address string, certific
 		Address: &certificateAddress,
 	}
 
-	err = global.GVA_DB.Where("address=?", address).FirstOrCreate(certificate).Error
+	err = global.GVA_DB.Model(&certificate2.Certificate{}).Where("address=?", address).FirstOrCreate(certificate).Error
 	if err != nil {
 		return err
 	}
