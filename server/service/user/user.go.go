@@ -96,7 +96,7 @@ func (user_infoService *UserService) UserGetCertificate(address string, certific
 		Address: &certificateAddress,
 	}
 
-	err = global.GVA_DB.Model(&certificate2.Certificate{}).Where("address=?", address).FirstOrCreate(certificate).Error
+	err = global.GVA_DB.Model(&certificate2.Certificate{}).Where("address=?", certificateAddress).FirstOrCreate(certificate).Error
 	if err != nil {
 		return err
 	}
