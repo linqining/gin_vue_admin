@@ -1,4 +1,4 @@
-import legacyPlugin from '@vitejs/plugin-legacy'
+// import legacyPlugin from '@vitejs/plugin-legacy'
 import { viteLogo } from './src/core/config'
 import Banner from 'vite-plugin-banner'
 import * as path from 'path'
@@ -25,7 +25,11 @@ export default ({ mode }) => {
 
   const timestamp = Date.parse(new Date())
 
-  const optimizeDeps = {}
+  const optimizeDeps = {
+      esbuildOptions: {
+        target: "es2020"
+      }
+  }
 
   const alias = {
     '@': path.resolve(__dirname, './src'),
@@ -87,23 +91,29 @@ export default ({ mode }) => {
           drop_debugger: true
         }
       },
+      target:'es2020',
       rollupOptions
     },
+    // optimizeDeps: {
+    //   esbuildOptions: {
+    //     target: "es2020"
+    //   }
+    // },
     esbuild,
     optimizeDeps,
     plugins: [
       process.env.VITE_POSITION === 'open' &&
         vueDevTools({ launchEditor: process.env.VITE_EDITOR }),
-      legacyPlugin({
-        targets: [
-          'Android > 39',
-          'Chrome >= 60',
-          'Safari >= 10.1',
-          'iOS >= 10.3',
-          'Firefox >= 54',
-          'Edge >= 15'
-        ]
-      }),
+      // legacyPlugin({
+      //   targets: [
+      //     'Android > 39',
+      //     'Chrome >= 60',
+      //     'Safari >= 10.1',
+      //     'iOS >= 10.3',
+      //     'Firefox >= 54',
+      //     'Edge >= 15'
+      //   ]
+      // }),
       vuePlugin(),
       svgBuilder('./src/assets/icons/'),
       svgBuilder('./src/plugin/'),
@@ -111,5 +121,6 @@ export default ({ mode }) => {
       VueFilePathPlugin('./src/pathInfo.json')
     ]
   }
+  console.log("server_target",config.server.proxy)
   return config
 }

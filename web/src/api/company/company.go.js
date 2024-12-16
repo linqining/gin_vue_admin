@@ -108,3 +108,17 @@ export const getCompanyPublic = () => {
     method: 'get',
   })
 }
+// BatchGetByAddress 批量获取公司信息
+// @Tags Company
+// @Summary 批量获取公司信息
+// @accept application/json
+// @Produce application/json
+// @Success 200 {object} response.Response{data=object,msg=string} "成功"
+// @Router /company_info/batchGetByAddress [POST]
+export const batchGetByAddress = (data) => {
+  return service({
+    url: '/company_info/batchGetByAddress',
+    method: 'POST',
+    data
+  })
+}
